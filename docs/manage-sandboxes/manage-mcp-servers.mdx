@@ -154,6 +154,15 @@ unset GITHUB_MCP_TOKEN
 
 For a trusted-private entry, pass the same reviewed `--trusted-private-host` value to `add`; NemoClaw resolves and records the replacement pins again. For a public entry, `add` resolves the hostname and creates a policy for the current validated public addresses.
 
+If another managed MCP server in the sandbox uses the same endpoint hostname and port, `add` reuses that server's recorded pins. For a trusted-private entry, current DNS must match those pins.
+
+If `add` fails, NemoClaw does not restore the removed server. Before you retry, run `$$nemoclaw my-sandbox mcp status github` and follow [Add Transaction Is Incomplete](../../reference/troubleshoot-mcp-servers#add-transaction-is-incomplete).
+
+<AgentOnly variant="hermes">
+If `add` reports an unknown outcome, do not retry, force-remove, or remove and re-add the server.
+Follow [Hermes Add Outcome Is Unknown](../../reference/troubleshoot-mcp-servers#hermes-add-outcome-is-unknown).
+</AgentOnly>
+
 The raw value passes only through the OpenShell provider command's process environment and is not added to argv, NemoClaw state, or sandbox config. Revoke the old credential upstream after the new add succeeds.
 
 If the provider was deleted, restart reports the source as unbound. Remove and add the server again when you intend to create a replacement provider.
@@ -174,7 +183,7 @@ $$nemoclaw my-sandbox mcp update doordash \
 
 The command changes only the live OpenShell policy. It does not change the agent-native endpoint, credential reference, provider, attachment, or agent adapter. Live policy is the enforcement source of truth; NemoClaw does not retain a second denied-tool intent record.
 
-NemoClaw validates the current source entry and endpoint pins, removes the existing route, and then applies the replacement. This keeps an interrupted stricter update fail-closed. If replacement activation fails, the MCP route remains blocked and the error prints the exact `mcp update` command to retry. Rebuild captures and restores the complete live policy, including denied-tool rules, without regenerating it from registry state.
+NemoClaw validates the current source entry and endpoint pins, removes the existing route, and then applies the replacement. This order keeps an interrupted stricter update fail-closed. If other managed MCP servers use the same hostname and port, the update reuses their recorded pins. If those servers have conflicting pins, the command changes no policy and prints the recovery step: the `--refresh-public-pins` command for public pins, or remove and add for trusted-private pins. If replacement activation fails, the MCP route remains blocked and the error prints the exact `mcp update` command to retry. Rebuild captures and restores the complete live policy, including denied-tool rules, without regenerating it from registry state.
 
 Clear every denied-tool rule explicitly:
 
@@ -193,20 +202,26 @@ $$nemoclaw my-sandbox mcp update github --refresh-public-pins
 $$nemoclaw my-sandbox mcp status github --tools
 ```
 
-The refresh validates the current DNS answers and replaces only `allowed_ips` on the existing MCP endpoint in the live OpenShell policy.
+The refresh validates current DNS answers. It then replaces only `allowed_ips` in the live OpenShell policy for this server and every other managed MCP server on the same hostname and port.
 It preserves denied tools, methods, binary grants, credential bindings, and every other policy field.
 Agent configuration, providers, and attachments remain unchanged, and NemoClaw retains no separate MCP pin record.
 Status, restart, rebuild, and restore do not refresh these pins.
 
 Refresh requires an existing public endpoint with exact public pins and matching agent and policy sources.
+Every managed MCP server on the same hostname and port must meet these requirements.
+Otherwise, refresh changes no policy.
 It rejects private or special-use DNS answers and policies with address ranges.
 Correct a reported source conflict before retrying.
 If the write cannot be confirmed, inspect `mcp status` and the live OpenShell policy before retrying.
-Successful tool discovery verifies that the endpoint is reachable through its existing credential binding.
+Successful tool discovery verifies only that the named server's endpoint is reachable through its existing credential binding.
+To verify another server on the same hostname and port, run `mcp status <server> --tools` for that server.
 
 For a trusted-private server, review every destination change before NemoClaw records new pins. Neither status, restart, rebuild, nor restore changes the recorded address set.
 
-If the endpoint moves to another address, remove and re-add the server:
+If the endpoint moves to another address, remove and re-add the server.
+NemoClaw rejects new pins that differ from a remaining server's recorded pins.
+If other trusted-private servers use the same hostname and port, remove them before you run the example below.
+After the example succeeds, add those servers again.
 
 ```bash
 export LOCAL_MCP_TOKEN='replace-with-secret-manager-value'
