@@ -101,7 +101,7 @@ If the user selects managed vLLM and the configured port, `${NEMOCLAW_VLLM_PORT:
 If no platform asset applies or its offered install path is declined, ask: "Which inference runtime or provider would you like?"
 Choices:
 
-1. Existing vLLM, when a ready server is detected on `localhost:${NEMOCLAW_VLLM_PORT:-8000}`; native N1x requires explicit standard-onboarding intent.
+1. Existing vLLM, when a ready server is detected on `localhost:${NEMOCLAW_VLLM_PORT:-8000}` and its `/v1/models` reports a model with `owned_by: "vllm"`; native N1x requires explicit standard-onboarding intent.
 2. Managed vLLM, optimized local inference with a large download.
 3. Local Ollama, only when the selected agent and platform support it.
 4. NVIDIA Endpoints, which requires an NVIDIA API key.
@@ -118,7 +118,7 @@ On ordinary supported macOS or Linux:
 
 - Offer Local Ollama for OpenClaw or Hermes when it is installed, running, or officially installable.
 - Do not offer Local Ollama for Deep Agents unless current official documentation adds support.
-- Offer an existing ready vLLM server when detected.
+- Offer an existing ready vLLM server when detected and its `/v1/models` reports a model with `owned_by: "vllm"`.
 - Also show all applicable hosted and compatible providers.
 - Do not hide Ollama merely because the computer is not DGX or GB300.
 - Omit managed vLLM unless current official support permits it for the detected hardware.
