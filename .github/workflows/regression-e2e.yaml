@@ -108,7 +108,7 @@ jobs:
 
       - name: Upload Model Router provider-routed inference logs on failure
         if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: model-router-provider-routed-inference-logs
           path: |
@@ -162,7 +162,7 @@ jobs:
 
       - name: Upload OpenClaw plugin release baseline artifacts
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: openclaw-plugin-runtime-exdev-release-artifacts
           path: e2e-artifacts/live/openclaw-plugin-runtime-exdev-release/
@@ -217,7 +217,7 @@ jobs:
 
       - name: Upload OpenClaw plugin runtime-deps EXDEV artifacts
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: openclaw-plugin-runtime-exdev-artifacts
           path: e2e-artifacts/live/openclaw-plugin-runtime-exdev/
