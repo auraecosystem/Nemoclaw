@@ -379,7 +379,7 @@ jobs:
       # With no run-id or repository override, download-artifact can only read
       # the named artifact produced by this same workflow run.
       - name: Download primary advisor artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: pr-review-advisor
           path: publish-artifacts/pr-review-advisor
@@ -390,7 +390,7 @@ jobs:
       - name: Download secondary advisor artifact
         id: download-secondary-advisor-artifact
         continue-on-error: true
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: pr-review-advisor-nemotron-ultra
           path: publish-artifacts/pr-review-advisor-nemotron-ultra
